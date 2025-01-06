@@ -1,24 +1,3 @@
-CREATE OR REPLACE TRIGGER set_feedback_date
-BEFORE INSERT ON feedback 
-for each row
-  begin 
-    if :new.created_date IS NULL
-      then 
-        :new.created_date := sysdate;
-      end if;
-  end;
-  
--------------------------------------------------------------  
-CREATE OR REPLACE TRIGGER update_image_status
-AFTER INSERT ON segmentation_data
-for each row
-  BEGIN
-  UPDATE image
-  SET processing_status = 'feldolgozott'
-  WHERE ID = :new.image_id;
-END;
-
---------------------------------------------------------------------
 
 CREATE OR REPLACE TRIGGER user_trg
   BEFORE INSERT OR UPDATE ON users

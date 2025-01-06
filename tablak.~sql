@@ -3,7 +3,12 @@ ID NUMBER NOT NULL PRIMARY KEY,
 name VARCHAR2(40) NOT NULL,
 email VARCHAR2(40) NOT NULL,
 role VARCHAR2(20) NOT NULL,
-permission VARCHAR2(30) NOT NULL
+permission VARCHAR2(30) NOT NULL,
+mod_user varchar2(300),
+created_on timestamp,
+last_mod timestamp,
+DML_FLAG varchar2(1),
+VERSION number
 );
 
 select * from users;
@@ -11,7 +16,12 @@ select * from users;
 CREATE TABLE image(
 ID NUMBER NOT NULL PRIMARY KEY,
 upload_date DATE DEFAULT SYSDATE NOT NULL,
-processing_status VARCHAR2(20) NOT NULL
+processing_status VARCHAR2(20) NOT NULL,
+mod_user varchar2(300),
+created_on timestamp,
+last_mod timestamp,
+DML_FLAG varchar2(1),
+VERSION number
 );
 
 select * from image;
@@ -21,7 +31,12 @@ ID NUMBER NOT NULL PRIMARY KEY,
 image_id NUMBER NOT NULL,
 number_of_segmented_cells NUMBER DEFAULT 0,
 segment_type VARCHAR2(30) NOT NULL,
-created_date DATE DEFAULT SYSDATE NOT NULL
+created_date DATE DEFAULT SYSDATE NOT NULL,
+mod_user varchar2(300),
+created_on timestamp,
+last_mod timestamp,
+DML_FLAG varchar2(1),
+VERSION number
 );
 
 select * from segmentation_data;
@@ -31,7 +46,12 @@ ID NUMBER NOT NULL PRIMARY KEY,
 user_id NUMBER NOT NULL,
 image_id NUMBER NOT NULL,
 feedback_text VARCHAR2(200) NOT NULL,
-created_date DATE
+created_date DATE,
+mod_user varchar2(300),
+created_on timestamp,
+last_mod timestamp,
+DML_FLAG varchar2(1),
+VERSION number
 );
 
 select * from feedback;
@@ -41,7 +61,12 @@ CREATE TABLE exported_data(
 ID NUMBER NOT NULL PRIMARY KEY,
 user_id NUMBER NOT NULL,
 export_format VARCHAR2(30) NOT NULL,
-created_date DATE DEFAULT SYSDATE NOT NULL
+created_date DATE DEFAULT SYSDATE NOT NULL,
+mod_user varchar2(300),
+created_on timestamp,
+last_mod timestamp,
+DML_FLAG varchar2(1),
+VERSION number
 );
 
 select * from exported_data;
@@ -50,82 +75,6 @@ ALTER TABLE segmentation_data ADD CONSTRAINT image_id_fk FOREIGN KEY (image_id) 
 ALTER TABLE feedback ADD CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users(ID);
 ALTER TABLE feedback ADD CONSTRAINT fk_image_id FOREIGN KEY (image_id) REFERENCES image(ID);
 ALTER TABLE exported_data ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(ID);
-
---Táblák feltöltése
-INSERT INTO users (ID, name, email, role, permission) VALUES (1, 'Anna Kovács', 'anna.kovacs@example.com', 'kutató', 'read');
-INSERT INTO users (ID, name, email, role, permission) VALUES (2, 'Péter Szabó', 'peter.szabo@example.com', 'kutató', 'read');
-INSERT INTO users (ID, name, email, role, permission) VALUES (3, 'Mária Nagy', 'maria.nagy@example.com', 'admin', 'read,write,delete');
-INSERT INTO users (ID, name, email, role, permission) VALUES (4, 'Gábor Tóth', 'gabor.toth@example.com', 'kutató', 'read');
-INSERT INTO users (ID, name, email, role, permission) VALUES (5, 'János Kiss', 'janos.kiss@example.com', 'admin', 'read,write');
-INSERT INTO users (ID, name, email, role, permission) VALUES (6, 'Éva Horváth', 'eva.horvath@example.com', 'kutató', 'read');
-INSERT INTO users (ID, name, email, role, permission) VALUES (7, 'László Molnár', 'laszlo.molnar@example.com', 'kutató', 'read,write');
-
-
-INSERT INTO image (ID, upload_date, processing_status) VALUES (1, TO_DATE('2024-11-01', 'YYYY-MM-DD'), 'feldolgozatlan');
-INSERT INTO image (ID, upload_date, processing_status) VALUES (2, TO_DATE('2024-11-02', 'YYYY-MM-DD'), 'feldolgozatlan');
-INSERT INTO image (ID, upload_date, processing_status) VALUES (3, TO_DATE('2024-11-03', 'YYYY-MM-DD'), 'feldolgozott');
-INSERT INTO image (ID, upload_date, processing_status) VALUES (4, TO_DATE('2024-11-04', 'YYYY-MM-DD'), 'feldolgozatlan');
-INSERT INTO image (ID, upload_date, processing_status) VALUES (5, TO_DATE('2024-11-05', 'YYYY-MM-DD'), 'feldolgozott');
-INSERT INTO image (ID, upload_date, processing_status) VALUES (6, TO_DATE('2024-11-06', 'YYYY-MM-DD'), 'feldolgozatlan');
-INSERT INTO image (ID, upload_date, processing_status) VALUES (7, TO_DATE('2024-11-07', 'YYYY-MM-DD'), 'feldolgozott');
-
-
-INSERT INTO segmentation_data (ID, image_id, number_of_segmented_cells, segment_type, created_date) VALUES (1, 1, 25, 'sejthártya', TO_DATE('2024-11-01', 'YYYY-MM-DD'));
-INSERT INTO segmentation_data (ID, image_id, number_of_segmented_cells, segment_type, created_date) VALUES (2, 2, 30, 'sejthártya', TO_DATE('2024-11-02', 'YYYY-MM-DD'));
-INSERT INTO segmentation_data (ID, image_id, number_of_segmented_cells, segment_type, created_date) VALUES (3, 3, 0, 'sejttest', TO_DATE('2024-11-03', 'YYYY-MM-DD'));
-INSERT INTO segmentation_data (ID, image_id, number_of_segmented_cells, segment_type, created_date) VALUES (4, 4, 15, 'sejttest', TO_DATE('2024-11-04', 'YYYY-MM-DD'));
-INSERT INTO segmentation_data (ID, image_id, number_of_segmented_cells, segment_type, created_date) VALUES (5, 5, 50, 'sejthártya', TO_DATE('2024-11-05', 'YYYY-MM-DD'));
-INSERT INTO segmentation_data (ID, image_id, number_of_segmented_cells, segment_type, created_date) VALUES (6, 6, 0, 'sejttest', TO_DATE('2024-11-06', 'YYYY-MM-DD'));
-INSERT INTO segmentation_data (ID, image_id, number_of_segmented_cells, segment_type, created_date) VALUES (7, 7, 40, 'sejthártya', TO_DATE('2024-11-07', 'YYYY-MM-DD'));
-
-
-INSERT INTO feedback (ID, user_id, image_id, feedback_text, created_date) VALUES (1, 1, 1, 'Nagyon jó minõségû kép, a szegmentációk pontosak.', TO_DATE('2024-11-01', 'YYYY-MM-DD'));
-INSERT INTO feedback (ID, user_id, image_id, feedback_text, created_date) VALUES (2, 2, 2, 'A képen látható sejtek jól elkülöníthetõk, de az egyes szegmensek határai kicsit elmosódottak.', TO_DATE('2024-11-02', 'YYYY-MM-DD'));
-INSERT INTO feedback (ID, user_id, image_id, feedback_text, created_date) VALUES (3, 3, 3, 'A szegmentációs eredményeket nem tartom eléggé pontosnak, szükséges javítás.', TO_DATE('2024-11-03', 'YYYY-MM-DD'));
-INSERT INTO feedback (ID, user_id, image_id, feedback_text, created_date) VALUES (4, 4, 4, 'A sejthártya szegmentációja rendben van, de a sejttestek nem jól lettek meghatározva.', TO_DATE('2024-11-04', 'YYYY-MM-DD'));
-INSERT INTO feedback (ID, user_id, image_id, feedback_text, created_date) VALUES (5, 5, 5, 'Kiváló eredmény, a szegmentációk és a sejtípusok jól vannak elkülönítve.', TO_DATE('2024-11-05', 'YYYY-MM-DD'));
-INSERT INTO feedback (ID, user_id, image_id, feedback_text, created_date) VALUES (6, 6, 6, 'A képek felbontása nem elégséges a szegmentáláshoz, a sejtek nehezen felismerhetõk.', TO_DATE('2024-11-06', 'YYYY-MM-DD'));
-INSERT INTO feedback (ID, user_id, image_id, feedback_text, created_date) VALUES (7, 7, 7, 'A szegmentációk elfogadhatók, de lehetne még javítani a sejtüreg és a sejthártya közötti határokon.', TO_DATE('2024-11-07', 'YYYY-MM-DD'));
-
-INSERT INTO exported_data (ID, user_id, export_format, created_date) VALUES (1, 1, 'CSV', TO_DATE('2024-11-01', 'YYYY-MM-DD'));
-INSERT INTO exported_data (ID, user_id, export_format, created_date) VALUES (2, 2, 'CSV', TO_DATE('2024-11-02', 'YYYY-MM-DD'));
-INSERT INTO exported_data (ID, user_id, export_format, created_date) VALUES (3, 3, 'szegmentált kép', TO_DATE('2024-11-03', 'YYYY-MM-DD'));
-INSERT INTO exported_data (ID, user_id, export_format, created_date) VALUES (4, 4, 'CSV', TO_DATE('2024-11-04', 'YYYY-MM-DD'));
-INSERT INTO exported_data (ID, user_id, export_format, created_date) VALUES (5, 5, 'szegmentált kép', TO_DATE('2024-11-05', 'YYYY-MM-DD'));
-INSERT INTO exported_data (ID, user_id, export_format, created_date) VALUES (6, 6, 'CSV', TO_DATE('2024-11-06', 'YYYY-MM-DD'));
-INSERT INTO exported_data (ID, user_id, export_format, created_date) VALUES (7, 7, 'szegmentált kép', TO_DATE('2024-11-07', 'YYYY-MM-DD'));
-
-
-
-alter table users add mod_user varchar2(300);
-alter table users add created_on timestamp;
-alter table users add last_mod timestamp;
-alter table users add DML_FLAG varchar2(1);
-alter table users add VERSION number;
-
-alter table image add mod_user varchar2(300);
-alter table image add created_on timestamp;
-alter table image add last_mod timestamp;
-alter table image add DML_FLAG varchar2(1);
-alter table image add VERSION number;
-
-alter table segmentation_data add mod_user varchar2(300);
-alter table segmentation_data add created_on timestamp;
-alter table segmentation_data add last_mod timestamp;
-alter table segmentation_data add DML_FLAG varchar2(1);
-alter table segmentation_data add VERSION number;
-
-alter table feedback add mod_user varchar2(300);
-alter table feedback add created_on timestamp;
-alter table feedback add last_mod timestamp;
-alter table feedback add DML_FLAG varchar2(1);
-alter table feedback add VERSION number;
-
-alter table exported_data add mod_user varchar2(300);
-alter table exported_data add created_on timestamp;
-alter table exported_data add last_mod timestamp;
-alter table exported_data add DML_FLAG varchar2(1);
-alter table exported_data add VERSION number;
 
 
 -- histroy táblák
@@ -202,3 +151,76 @@ version	      number
 );
 
 select * from exported_data_h;
+
+--Táblák feltöltése
+INSERT INTO users (name, email, role, permission) VALUES ('Anna Kovács', 'anna.kovacs@example.com', 'kutató', 'read');
+INSERT INTO users (name, email, role, permission) VALUES ('Péter Szabó', 'peter.szabo@example.com', 'kutató', 'read');
+INSERT INTO users (name, email, role, permission) VALUES ('Mária Nagy', 'maria.nagy@example.com', 'admin', 'read,write,delete');
+INSERT INTO users (name, email, role, permission) VALUES ('Gábor Tóth', 'gabor.toth@example.com', 'kutató', 'read');
+INSERT INTO users (name, email, role, permission) VALUES ('János Kiss', 'janos.kiss@example.com', 'admin', 'read,write');
+INSERT INTO users (name, email, role, permission) VALUES ('Éva Horváth', 'eva.horvath@example.com', 'kutató', 'read');
+INSERT INTO users (name, email, role, permission) VALUES ('László Molnár', 'laszlo.molnar@example.com', 'kutató', 'read,write');
+
+
+INSERT INTO image (upload_date, processing_status) VALUES (TO_DATE('2024-11-01', 'YYYY-MM-DD'), 'feldolgozatlan');
+INSERT INTO image (upload_date, processing_status) VALUES (TO_DATE('2024-11-02', 'YYYY-MM-DD'), 'feldolgozatlan');
+INSERT INTO image (upload_date, processing_status) VALUES (TO_DATE('2024-11-03', 'YYYY-MM-DD'), 'feldolgozott');
+INSERT INTO image (upload_date, processing_status) VALUES (TO_DATE('2024-11-04', 'YYYY-MM-DD'), 'feldolgozatlan');
+INSERT INTO image (upload_date, processing_status) VALUES (TO_DATE('2024-11-05', 'YYYY-MM-DD'), 'feldolgozott');
+INSERT INTO image (upload_date, processing_status) VALUES (TO_DATE('2024-11-06', 'YYYY-MM-DD'), 'feldolgozatlan');
+INSERT INTO image (upload_date, processing_status) VALUES (TO_DATE('2024-11-07', 'YYYY-MM-DD'), 'feldolgozott');
+
+-- segmentation_data feltöltése
+BEGIN
+  FOR rec IN (SELECT ID FROM image ORDER BY ID) LOOP
+    INSERT INTO segmentation_data (image_id, number_of_segmented_cells, segment_type, created_date)
+    VALUES (rec.ID, TRUNC(DBMS_RANDOM.VALUE(10, 100)), 'Type ' || CHR(65 + MOD(rec.ID, 3)), SYSDATE - rec.ID * 10);
+  END LOOP;
+END;
+
+
+-- feedback feltöltése
+BEGIN
+  FOR rec IN (SELECT ID FROM image ORDER BY ID) LOOP
+    FOR user_rec IN (SELECT ID FROM users ORDER BY DBMS_RANDOM.VALUE) LOOP
+      INSERT INTO feedback (user_id, image_id, feedback_text, created_date)
+      VALUES (
+        user_rec.ID,                        
+        rec.ID,                              
+        'Feedback for image ' || rec.ID,      
+        SYSDATE - rec.ID * 5                 
+      );
+      EXIT; 
+    END LOOP;
+  END LOOP;
+END;
+
+
+-- exported_data feltöltése
+BEGIN
+  FOR rec IN (SELECT ID FROM users ORDER BY ID) LOOP
+    INSERT INTO exported_data (user_id, export_format, created_date)
+    VALUES (
+      rec.ID,                               
+      CASE 
+        WHEN MOD(rec.ID, 3) = 0 THEN 'CSV'  
+        WHEN MOD(rec.ID, 3) = 1 THEN 'JSON'
+        ELSE 'XML'
+      END,
+      SYSDATE - rec.ID * 7                  
+    );
+  END LOOP;
+END;
+
+
+--Típus létrehozása
+CREATE OR REPLACE TYPE image_data_type AS OBJECT (
+  image_id NUMBER,
+  segmented_cell_count NUMBER,
+  processing_status VARCHAR2(20),
+  segment_type VARCHAR2(50) 
+  );
+
+CREATE OR REPLACE TYPE image_data_type_l IS TABLE OF image_data_type;
+
+
